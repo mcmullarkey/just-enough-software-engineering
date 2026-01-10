@@ -1,0 +1,12 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# Quarto
+docs/.quarto/
+docs/_book/
+docs/_freeze/
+
+# Planning
+planning/

@@ -1,0 +1,27 @@
+# Preface {.unnumbered}
+
+Welcome to **Just Enough Software Engineering for Social and Data Scientists** by Michael Mullarkey. 
+
+I write production code as a Machine Learning Engineer, and I used to be both a data scientsit at a couple of startups + a social scientist who did a ton of academic data work. 
+
+I'm sympathetic to the structural limitations inherent to data + social scientist roles. And I still think *just enough* software engineering can improve people's lives in these roles.
+
+## About This Book
+
+The goal of this book is to provide *just enough* software engineering knowledge to be effective without overwhelming you with unnecessary detail.
+
+## Who This Book Is For
+
+This book is designed for:
+
+- Data scientists looking to improve their engineering practices
+- Social scientists who are curious about how better software engineering can make their lives easier
+- Anyone who uses code to solve problems who wants to improve their coding practices
+
+## How to Use This Book
+
+This book is more about how to think about code vs. how to write language-specific code. Each chapter builds on the previous one, so I recommend reading the book in order.
+
+## Acknowledgments
+
+Thanks to Dr. Christopher Beevers and the Mood Disorders Laboratory for providing the time/resources that made this book possible!

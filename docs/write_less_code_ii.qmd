@@ -1,0 +1,287 @@
+# Write less code, part II
+
+## The copy-paste trap
+
+Need to reverse score items for anxiety, depression, and stress scales? Copy the code seventeen times and change the column names. It worked!
+
+Except wait, you forgot to change the item number for one of the stress scale columns. And now you're not sure if that stress finding you were about to send off is real or due to miscalculating the scale.
+
+Here's the thing:
+
+- Many social and data scientists
+    - Copy-paste code when they need to do similar things
+    - Learn about functions later (if at all)
+- Many software engineers
+    - Get introduced to functions from day one
+    - Think about code reuse from the beginning
+
+Once you start thinking about functions, copy-pasting feels tedious. There's a better way.
+
+## Wait, I'm repeating myself?
+
+Let's say you've created a plan for your data cleaning with pseudocode. That's awesome!
+
+Now, do you see the same steps showing up multiple times?
+
+- "Reverse score items for this scale... now do it for these seven other scales"
+- "Calculate average bill length by species... now do it for flipper length... now for body mass"
+- "Clean the column names in this dataset... now do it for these five other datasets"
+
+That repetition is a signal. You want to write the code once and use it many times.
+
+Since you went through the pseudocode process you know the kinds of operations you'll need to do over and over again.
+
+Enter functions and loops.
+
+## Switching gears from penguins to surveys
+
+So far we've used the Palmer Penguins dataset for examples. It's great for learning, but let's switch to something you're more likely to encounter: reverse scoring survey items.
+
+If you've worked with psychological scales, you know the drill. Some items are worded positively, others negatively. You need to reverse the negatively-worded ones before calculating scale scores. And if you have multiple scales? You're reverse scoring a *lot* of items.
+
+This is exactly the kind of repetitive task where functions and loops shine.
+
+## What's a function?
+
+Think of a function like a tool. You build it once, then use it on different materials as many times as you need.
+
+Here's the anatomy of a function:
+
+1. **Process**: What steps do you take? (e.g., subtract each score from max + 1)
+2. **Inputs**: What material goes into the tool? (e.g., scores to reverse, max value of the scale)
+3. **Output**: What do you get at the end? (e.g., reversed scores)
+
+You likely already have a version of **Process** if you've written code you were planning to copy-paste. Let's say you're reverse scoring a single column in a depression scale that goes from 1-7. You might do something like this:
+
+::: {.panel-tabset group="language"}
+### R
+```{r}
+#| eval: false
+# Reverse score depression item
+survey_data$depression_2_rev <- 7 - survey_data$depression_2
+```
+
+### Python
+```{python}
+#| eval: false
+#| python.reticulate: false
+# Reverse score depression item
+survey_data['depression_2_rev'] = 7 - survey_data['depression_2']
+```
+:::
+
+This is basically what we need for **Process** already! To figure out what we need to change for this to work across multiple scales, it can be useful to plan what the **Inputs** and **Output** look like.
+
+The **Inputs** in this case are: 
+
+- A column that needs to be reverse scored ('depression_2_rev')
+- THe max value of the scale (7)
+
+The **Output** in this case is:
+
+- A column that's been reverse scored
+
+Here's an example putting it all together for reverse scoring survey items:
+
+::: {.panel-tabset group="language"}
+### R
+```{r}
+#| eval: false
+## The inputs are inside function() before the {}
+reverse_score <- function(scores, max_value = 5) {
+  reversed <- max_value + 1 - scores
+  ## The outpus are inside return()
+  return(reversed)
+}
+
+# Use it
+original_scores <- c(1, 2, 3, 4, 5)
+reverse_score(original_scores)
+# Returns: 5 4 3 2 1
+```
+
+### Python
+```{python}
+#| eval: false
+#| python.reticulate: false
+## The inputs are inside reverse_score() before the :
+def reverse_score(scores, max_value=5):
+    reversed_scores = max_value + 1 - scores
+    ## The output follows return
+    return reversed_scores
+
+# Use it
+import pandas as pd
+original_scores = pd.Series([1, 2, 3, 4, 5])
+reverse_score(original_scores)
+# Returns: 5 4 3 2 1
+```
+:::
+
+Even though you originally wrote the **Process** for a scale with a max of seven, this function works for any max value.
+
+You write the function once, and then use it everywhere. No more copy-pasting!
+
+## Functions and the single responsibility principle
+
+Notice how they're short and have names saying exactly what they do?
+
+We've solved our problems of relying on comments! And to boot, we now can translate directly from pseudocode to *functions* instead of having to write the same small chunks over and over again.
+
+It's important these functions follow the single responsibility principle and only do one thing at a time. They might do that one thing many places in your codebase, but notice that we didn't create the function `reverse_and_recode_scores()` That's on purpose!
+
+I also have a "no-scroll" rule for my functions, which is if they're so long I have to start scrolling they're too long. Either they're doing more than one thing or I need to break the logic up into smaller, helper-style functions.
+
+But what if we want to use the function many times without just... copy-pasting the function over and over again?
+
+## What's a loop?
+
+A loop lets you apply your function many times without reverting to copy-pasting.
+
+Think of it like this: you have a tool (your function), and you want to use it on different materials (your different datasets or columns).
+
+The syntax differs between R and Python, but the concept is the same.
+
+**R**: Uses functional programming with `map()` from the purrr package
+**Python**: Uses explicit `for` loops
+
+Let's see both in action.
+
+## Putting it together
+
+Imagine you're analyzing survey data with three scales: anxiety, depression, and stress. Each scale has items that need reverse scoring.
+
+### The copy-paste approach
+
+This works, but notice the repetition:
+
+::: {.panel-tabset group="language"}
+### R
+```{r}
+#| eval: false
+# Reverse score anxiety items
+survey_data$anxiety_1_rev <- 5 - survey_data$anxiety_1
+survey_data$anxiety_3_rev <- 5 - survey_data$anxiety_3
+survey_data$anxiety_5_rev <- 5 - survey_data$anxiety_5
+
+# Reverse score depression items
+survey_data$depression_2_rev <- 5 - survey_data$depression_2
+survey_data$depression_4_rev <- 5 - survey_data$depression_4
+
+# Reverse score stress items
+survey_data$stress_1_rev <- 5 - survey_data$stress_1
+survey_data$stress_4_rev <- 5 - survey_data$stress_4
+# Oh no we made a typo! If only we'd done a loop!
+survey_data$stress_6_rev <- 6 - survey_data$stress_6 
+```
+
+### Python
+```{python}
+#| eval: false
+#| python.reticulate: false
+# Reverse score anxiety items
+survey_data['anxiety_1_rev'] = 5 - survey_data['anxiety_1']
+survey_data['anxiety_3_rev'] = 5 - survey_data['anxiety_3']
+survey_data['anxiety_5_rev'] = 5 - survey_data['anxiety_5']
+
+# Reverse score depression items
+survey_data['depression_2_rev'] = 5 - survey_data['depression_2']
+survey_data['depression_4_rev'] = 5 - survey_data['depression_4']
+
+# Reverse score stress items
+survey_data['stress_1_rev'] = 5 - survey_data['stress_1']
+survey_data['stress_4_rev'] = 5 - survey_data['stress_4']
+# Oh no we made a typo! If only we'd done a loop!
+survey_data['stress_6_rev'] = 6 - survey_data['stress_6']
+```
+:::
+
+That's a lot of typing. And if you need to change the max value or fix a bug, you have to update every single line.
+
+### The function + loop approach
+
+Now let's use a function and a loop:
+
+::: {.panel-tabset group="language"}
+### R
+```{r}
+#| eval: false
+library(purrr)
+library(dplyr)
+
+# Define our function
+reverse_score <- function(scores, max_value = 5) {
+  return(max_value + 1 - scores)
+}
+
+# List of columns to reverse
+cols_to_reverse <- c("anxiety_1", "anxiety_3", "anxiety_5",
+                     "depression_2", "depression_4",
+                     "stress_1", "stress_4", "stress_6")
+
+# Use map to apply the function to each column
+reversed_columns <- cols_to_reverse |>
+  map(~ reverse_score(survey_data[[.x]], max_value = 5)) |>
+  set_names(paste0(cols_to_reverse, "_rev"))
+
+# Add reversed columns to the dataframe
+survey_data <- bind_cols(survey_data, reversed_columns)
+```
+
+### Python
+```{python}
+#| eval: false
+#| python.reticulate: false
+# Define our function
+def reverse_score_column(data, col_name, max_value=5):
+    new_col_name = f"{col_name}_rev"
+    data[new_col_name] = max_value + 1 - data[col_name]
+    return data
+
+# List of columns to reverse
+cols_to_reverse = ['anxiety_1', 'anxiety_3', 'anxiety_5',
+                   'depression_2', 'depression_4',
+                   'stress_1', 'stress_4', 'stress_6']
+
+# Apply the function to each column using a loop
+for col in cols_to_reverse:
+    survey_data = reverse_score_column(survey_data, col, max_value=5)
+```
+:::
+
+Notice what happened:
+
+1. We wrote the reverse scoring logic **once** in a function
+2. We listed the columns we want to process
+3. We applied the function to each column using iteration
+
+Now if we need to change the logic, we update it in one place. If we need to add more columns, we just add them to the list.
+
+## So I can never copy-paste?
+
+If you're doing something 3 times or more, write a function.
+
+The copy-paste approach works for one-off tasks. But the moment you notice continued repetition, that's your cue to think about functions.
+
+Some benefits:
+
+- **Less code to maintain**: Fix bugs in one place, not eight places
+- **Easier to understand**: The function name tells you what it does
+- **Easier to test**: Test the function once, trust it everywhere[^1]
+- **More flexible**: Easy to adjust when requirements change
+
+And don't worry about the differences between R's `map()` and Python's `for` loops.[^2] The concept is the same: apply a function multiple times. The syntax is just window dressing.
+
+## Wrapping up
+
+We've now covered two key ways to write less code:
+
+1. **Break code into small chunks** (single responsibility principle)
+2. **Eliminate repetition** with functions and loops
+
+These two approaches work together. Small, focused functions are easier to reuse. And when you find yourself reusing the same function multiple times, you know you made the right call.
+
+But there's a catch. How do you know your functions actually work correctly? That's where we need to write *more* code, specifically tests. We'll tackle that in the next chapter.
+
+[^1]: We'll talk about testing in the "Write more code" chapters
+[^2]: Also there's `map()` in Python and `for` loops in R! I just went with what people tend to learn first in both languages.

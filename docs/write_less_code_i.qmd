@@ -1,0 +1,203 @@
+# Write less code, part I
+
+## You know the drill by now
+
+- Many social and data scientists 
+    - Code in notebooks like Jupyter or RMarkdown
+    - Prioritize code that gets the job done, even if it's wordy
+- Many software engineers
+    - Code in scripts like .py or .R files
+    - Prioritize succinct code, even if a wordier option would be easier to write
+
+I've written a lot of code that technically worked. The data got cleaned, the models got run, and deliverables got sent off on time.
+
+However, until I started taking a more engineering-like approach, I would write *long* chunks of code in notebooks. I know from experience I'm not the only soical or data scientist who leans this way.
+
+## But my code works!
+
+At first this shift might seem pedantic, "why are you bothering me if my code works?"
+
+And while I get where that argument is coming from, two things:
+
+1. The code running without errors ≠ the code working[^1]
+2. Writing code for human undestanding > writing code for machine understanding
+
+You don't even need to be working with anyone else on a project to check the human understanding part. How many times have you come back to code you wrote a while ago and struggled to understand what's happening? I know I have. 
+
+Luckily there's a straightforward approach to make your code easier to understand: writing code in smaller chunks.
+
+## But how?
+
+Your code likely needs to do a lot. But if we plan ahead like we discussed in the last chapter we can still break the code down.
+
+Let's revisit our pseudocode from the last chapter
+
+::: {.panel-tabset group="language"}
+### R
+```{r}
+#| eval: false
+# Load the data
+# Only include penguins that are present on all islands
+# Group by species and calculate average bill length
+# Arrange by longest bill length and display results
+```
+
+### Python
+```{python}
+#| eval: false
+#| python.reticulate: false
+# Load the data
+# Only include penguins that are present on all islands
+# Group by species and calculate average bill length
+# Arrange by longest bill length and display results
+```
+:::
+
+This is a good start, and we can do better. 
+
+One indicator that the code might be doing too much is the presence of conjunctions: and, but, or
+
+Ideally we want each section of code to do one thing at a time. The technical term here is [single responsibility principle](https://en.wikipedia.org/wiki/Single-responsibility_principle).[^2] 
+
+Here's an update to the pseudocode based on trying to do one thing at a time.
+
+::: {.panel-tabset group="language"}
+### R
+```{r}
+#| eval: false
+# Load the data
+# Only include penguins that are present on all islands
+# Group by species
+# Calculate average bill length
+# Arrange by longest bill length
+# Display results
+```
+
+### Python
+```{python}
+#| eval: false
+#| python.reticulate: false
+# Load the data
+# Only include penguins that are present on all islands
+# Group by species
+# Calculate average bill length
+# Arrange by longest bill length
+# Display results
+```
+:::
+
+Now our pseudocode sets us up to write the code in smaller chunks. I suggest literally creating separate chunks for each line of pseudocode code if you're writing code in a notebook.
+
+## Why bother?
+
+This breakout might seem excessive at first, but we're spending a bit more time up front to make our code far easier to understand/debug later. 
+
+To take an extreme example, switch the code to your less familiar language. This version probably feels daunting to read:
+
+::: {.panel-tabset group="language"}
+### R
+```{r}
+#| eval: false
+library(palmerpenguins)
+library(dplyr)
+
+penguins |> filter(species %in% (penguins |> group_by(species) |> summarize(island_count = n_distinct(island)) |> filter(island_count == max((penguins |> summarize(max_islands = n_distinct(island)))$max_islands)) |> pull(species))) |> group_by(species) |> summarize(avg_bill_length = mean(bill_length_mm, na.rm = TRUE)) |> arrange(desc(avg_bill_length)) |> print()
+```
+
+### Python
+```{python}
+#| eval: false
+#| python.reticulate: false
+import pandas as pd
+from palmerpenguins import load_penguins
+
+penguins = load_penguins()
+print(penguins.groupby('species').filter(lambda x: x['species'].iloc[0] in penguins.groupby('species')['island'].nunique()[penguins.groupby('species')['island'].nunique() == penguins['island'].nunique()].index).groupby('species')['bill_length_mm'].mean().sort_values(ascending=False))
+```
+:::
+
+While this version can feel more straightforward:
+
+::: {.panel-tabset group="language"}
+### R
+```{r}
+#| eval: false
+# Load the data
+library(palmerpenguins)
+library(dplyr)
+penguins_data <- penguins
+
+# Only include penguins that are present on all islands
+species_island_counts <- penguins_data |>
+  group_by(species) |>
+  summarize(island_count = n_distinct(island))
+
+total_islands <- n_distinct(penguins_data$island)
+
+species_on_all_islands <- species_island_counts |>
+  filter(island_count == total_islands) |>
+  pull(species)
+
+penguins_filtered <- penguins_data |>
+  filter(species %in% species_on_all_islands)
+
+# Group by species
+penguins_grouped <- penguins_filtered |>
+  group_by(species)
+
+# Calculate average bill length
+penguins_with_avg <- penguins_grouped |>
+  summarize(avg_bill_length = mean(bill_length_mm, na.rm = TRUE))
+
+# Arrange by longest bill length
+penguins_sorted <- penguins_with_avg |>
+  arrange(desc(avg_bill_length))
+
+# Display results
+print(penguins_sorted)
+```
+
+### Python
+```{python}
+#| eval: false
+#| python.reticulate: false
+# Load the data
+import pandas as pd
+from palmerpenguins import load_penguins
+
+penguins_data = load_penguins()
+
+# Only include penguins that are present on all islands
+species_island_counts = penguins_data.groupby('species')['island'].nunique()
+total_islands = penguins_data['island'].nunique()
+species_on_all_islands = species_island_counts[species_island_counts == total_islands].index
+penguins_filtered = penguins_data[penguins_data['species'].isin(species_on_all_islands)]
+
+# Group by species
+penguins_grouped = penguins_filtered.groupby('species')
+
+# Calculate average bill length
+penguins_with_avg = penguins_grouped['bill_length_mm'].mean().reset_index()
+penguins_with_avg.columns = ['species', 'avg_bill_length']
+
+# Arrange by longest bill length
+penguins_sorted = penguins_with_avg.sort_values('avg_bill_length', ascending=False)
+
+# Display results
+print(penguins_sorted)
+```
+:::
+
+## Is this actually less code?
+
+Even if we just stopped here, our code would still be easier to read + debug later.
+
+But to truly write less code, we need to learn two new concepts we'll introduce in the next chapter.
+
+For example, right now we're relying on comments to tell us what we're doing. That's not inherently bad, and generally we want to save comments to explain *why* we're doing something.
+
+Also, this granular approach feels like a lot if we have to do it more than once. What if we also want to look at flipper length in addition to bill length? And right now we're writing *more* lines of code vs. the less readable option.
+
+[^1]: More on this idea in the "Write more code" chapters
+[^2]: The Wiki here leans toward something called object-oriented programming, but this idea extends beyond that.
+

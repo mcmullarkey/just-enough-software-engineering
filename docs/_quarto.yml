@@ -1,0 +1,22 @@
+project:
+  type: book
+  output-dir: _book
+
+book:
+  title: "Just Enough Software Engineering"
+  subtitle: "For Social and Data Scientists"
+  author: "Michael Mullarkey"
+  date: today
+  chapters:
+    - index.qmd
+    - intro.qmd
+    - dont_start_coding.qmd
+    - write_less_code_i.qmd
+    - write_less_code_ii.qmd
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 2
+    number-sections: true

@@ -1,0 +1,38 @@
+# Introduction
+
+## Why for Social and Data Scientists?
+
+- Many social and data scientists 
+    - Use coding to solve problems + produce deliverables
+    - Don't have a software engineering background
+- Many "get better at coding" resources assume either
+    - Little to no background using code
+    - A software-engineering background for using code
+
+Therefore, most resources will either: 
+
+- Have a ton of extra fluff data and social scientists don't need
+    - People give up out of boredom
+- Feel unapproachable to non-software engineers
+    - People give up due to a steep learning curve
+
+This resource aims to flatten that learning curve. 
+
+The goal is not to *become a software engineer*. Instead this resource will teach you to approach code in a way that will make a myriad of other resources more useful.
+
+## Why "Just Enough"?
+
+Because scope-creep is the enemy. There's a version of this book that's 1,000 pages long. No social or data scientist has time to read that book.
+
+The guiding principle for this book:
+
+> Provide concise, accessible steps for thinking about code like a software engineer
+
+## Core Principles
+
+Throughout this book, we'll explore software engineering through several core principles:
+
+1. **Don't start coding yet**: How to stop writing code without a plan
+2. **Where to write less code**: Each section of your code can do less than you think
+3. **Where to write more code**: Testing + logging will become your new best friends
+4. **Future-proofing**: Make sure your code can still run + get accessed when you need it in 6 months

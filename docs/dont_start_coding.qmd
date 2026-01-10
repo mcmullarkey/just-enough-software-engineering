@@ -1,0 +1,97 @@
+# Don't start coding yet
+
+## Wait, what?
+
+- Many social and data scientists 
+    - Get introduced to coding as a way to do statistics
+    - Statistics focuses on how our results are uncertain
+- Many software engineers
+    - Get introduced to coding as a way to build programs
+    - Programs focus on providing predictable results
+
+You don't know what the results of a linear regression will be before you run the code.
+
+You can be pretty certain[^1] before you run the code whethere your to-do list app will work.
+
+It's easy to fall into the trap of assuming you can't plan ahead while coding. Especially when your primary exposure to coding is in service of creating models.
+
+## Let's take the win
+
+And the "engineering" part of software engineering isn't a metaphor.[^2] One of the great parts of an engineering task is you can plan *a ton* of what you're going to do in advance. We don't get that in the output phase of our modeling efforts, but let's take the win everywhere else.
+
+I'm sure there are social and data scientists who plan plenty before they start writing code. And in my experience we're far more likely to instead start hacking away at a solution.
+
+## Making planning practical
+
+Planning out your code can take a ton of forms. This approach is designed to be language + task-agnostic, which I've found flattens its learning curve vs. other planning paradigms.
+
+### Get a snapshot of what your data looks like now
+
+Give yourself a sense of what your data looks like right now, a call to `head` in whatever language will usually suffice.
+
+::: {.panel-tabset group="language"}
+### R
+```{r}
+#| eval: false
+# Load the Palmer Penguins dataset
+library(palmerpenguins)
+
+# Look at the first few rows
+head(penguins)
+```
+
+### Python
+```{python}
+#| eval: false
+#| python.reticulate: false
+# Load the Palmer Penguins dataset
+import pandas as pd
+from palmerpenguins import load_penguins
+
+penguins = load_penguins()
+
+# Look at the first few rows
+penguins.head()
+```
+:::
+
+### Create a snapshot of what you want your data to look like
+
+This will differ a ton based on your task, but you generally use code to transform the data in some meaningful way. For simplicity, let's say you want average average bill length by species.
+
+### Use pseudocode
+
+Instead of instantaneously trying to hack away at the code in your chosen language, write pseudocode as comments.
+
+We'll talk more about how to write better pseudocode in the next chapter, but for now it can be simple. We just want to get a sense of what we'd like to do to the data before we start tackling the code. Even if you don't know the exact syntax to accomplish the step, you don't have to yet![^3]
+
+::: {.panel-tabset group="language"}
+### R
+```{r}
+#| eval: false
+# Load the data
+# Only include penguins that are present on all islands
+# Group by species and calculate average bill length
+# Arrange by longest bill length and display results
+```
+
+### Python
+```{python}
+#| eval: false
+#| python.reticulate: false
+# Load the data
+# Only include penguins that are present on all islands
+# Group by species and calculate average bill length
+# Arrange by longest bill length and display results
+```
+:::
+
+### But I don't like pseuodocode
+
+That's fine! I care very little about the exact form your planning takes. Any structure that helps you plan ahead beats this structure if you won't use it. 
+
+I would recommend trying it for the purposes of this book, as we'll be expanding on it usage in the following chapters.
+
+[^1]: Though often not 100%, human error is real!
+[^2]: Mostly, see [this resource](https://www.hillelwayne.com/talks/crossover-project/) for more in-depth discussion.
+[^3]: It's not a coincidence the pseudocode is the same across R/Python. One of the great parts of this planning structure is that it works across coding languages.
