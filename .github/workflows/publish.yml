@@ -32,6 +32,11 @@ jobs:
         with:
           r-version: '4.3.0'
 
+      - name: Install R packages
+        run: |
+          install.packages(c("knitr", "rmarkdown"))
+        shell: Rscript {0}
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
