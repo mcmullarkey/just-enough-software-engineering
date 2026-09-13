@@ -198,6 +198,83 @@ For example, right now we're relying on comments to tell us what we're doing. Th
 
 Also, this granular approach feels like a lot if we have to do it more than once. What if we also want to look at flipper length in addition to bill length? And right now we're writing *more* lines of code vs. the less readable option.
 
+## Practice breaking down code into chunks
+
+::: {.blendtutor language="python" packages="pandas"}
+The one-liner in the template works, but it does everything at once. Rewrite it
+so each chunk does one thing, following the pseudocode comments. Store the final
+table in `penguins_sorted` with columns `species` and `avg_bill_length`.
+
+```python
+import pandas as pd
+
+penguins_data = pd.DataFrame({
+    "species": ["Adelie"] * 3 + ["Gentoo"] * 3 + ["Chinstrap"] * 2,
+    "island": ["Biscoe", "Dream", "Torgersen"] * 2 + ["Dream"] * 2,
+    "bill_length_mm": [38.0, 40.0, 39.0, 47.0, 49.0, 48.0, 50.0, 52.0],
+})
+
+# Works, but hard to read:
+# print(penguins_data.groupby('species').filter(lambda x: x['species'].iloc[0] in penguins_data.groupby('species')['island'].nunique()[penguins_data.groupby('species')['island'].nunique() == penguins_data['island'].nunique()].index).groupby('species')['bill_length_mm'].mean().sort_values(ascending=False))
+
+# Only include penguins that are present on all islands
+
+# Group by species
+
+# Calculate average bill length
+
+# Arrange by longest bill length
+
+# Display results
+```
+
+```{.python .checks}
+assert list(penguins_sorted['species']) == ['Gentoo', 'Adelie']
+assert list(penguins_sorted['avg_bill_length']) == [48.0, 39.0]
+```
+
+```{.python .solution}
+import pandas as pd
+
+penguins_data = pd.DataFrame({
+    "species": ["Adelie"] * 3 + ["Gentoo"] * 3 + ["Chinstrap"] * 2,
+    "island": ["Biscoe", "Dream", "Torgersen"] * 2 + ["Dream"] * 2,
+    "bill_length_mm": [38.0, 40.0, 39.0, 47.0, 49.0, 48.0, 50.0, 52.0],
+})
+
+# Only include penguins that are present on all islands
+species_island_counts = penguins_data.groupby("species")["island"].nunique()
+total_islands = penguins_data["island"].nunique()
+species_on_all_islands = species_island_counts[species_island_counts == total_islands].index
+penguins_filtered = penguins_data[penguins_data["species"].isin(species_on_all_islands)]
+
+# Group by species
+penguins_grouped = penguins_filtered.groupby("species")
+
+# Calculate average bill length
+penguins_with_avg = penguins_grouped["bill_length_mm"].mean().reset_index()
+penguins_with_avg.columns = ["species", "avg_bill_length"]
+
+# Arrange by longest bill length
+penguins_sorted = penguins_with_avg.sort_values("avg_bill_length", ascending=False)
+
+# Display results
+print(penguins_sorted)
+```
+
+::: {.hints}
+- Give each step its own named variable so you can print and check it on its own.
+- Count islands per species with `.groupby("species")["island"].nunique()`.
+- `.isin()` keeps the rows whose species is in a list of names.
+:::
+
+::: {.success-criteria}
+- Each chunk does one thing (no step joined by "and"), matching the pseudocode
+- Intermediate results are stored in named variables, not chained in one line
+- `penguins_sorted` holds only species present on all islands, with their average bill length, longest first
+:::
+:::
+
 [^1]: More on this idea in the "Write more code" chapters
 [^2]: The Wiki here leans toward something called object-oriented programming, but this idea extends beyond that.
 

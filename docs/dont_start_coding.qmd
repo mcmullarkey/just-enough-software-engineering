@@ -2,16 +2,11 @@
 
 ## Wait, what?
 
-- Many social and data scientists 
-    - Get introduced to coding as a way to do statistics
-    - Statistics focuses on how our results are uncertain
-- Many software engineers
-    - Get introduced to coding as a way to build programs
-    - Programs focus on providing predictable results
+Social and data scientists get introduced to coding as a way to do statistics. Statistics focuses on how our results are uncertain.
 
-You don't know what the results of a linear regression will be before you run the code.
+Software engineers get introduced to coding as a way to build programs. Programs focus on providing predictable results.
 
-You can be pretty certain[^1] before you run the code whethere your to-do list app will work.
+You don't know what the results of a linear regression will be before you run the code. You can be pretty certain[^1] before you run the code whethere your to-do list app will work.
 
 It's easy to fall into the trap of assuming you can't plan ahead while coding. Especially when your primary exposure to coding is in service of creating models.
 
@@ -86,7 +81,17 @@ We'll talk more about how to write better pseudocode in the next chapter, but fo
 ```
 :::
 
-### But I don't like pseuodocode
+## Practice writing your own pseudocode
+
+::: {.blendtutor language="r"}
+Write pseudocode in a series of comments, NOT ACTUAL CODE, to read in data, group by penguin species, and get the average bill length.
+
+```r
+# Your comments here
+```
+:::
+
+## But I don't like pseuodocode
 
 That's fine! I care very little about the exact form your planning takes. Any structure that helps you plan ahead beats this structure if you won't use it. 
 

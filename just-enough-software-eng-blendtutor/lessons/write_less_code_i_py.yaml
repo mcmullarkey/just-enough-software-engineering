@@ -1,0 +1,84 @@
+lesson_name: "write_less_code_i_py"
+language: Python
+description: "Break a do-everything one-liner into chunks that each do one thing"
+textbook_reference: "Just Enough Software Engineering - Write less code, part I"
+
+exercise:
+  type: "function_writing"
+  prompt: |
+    The one-liner in the template works, but it does everything at once. Rewrite it
+    so each chunk does one thing, following the pseudocode comments. Store the final
+    table in `penguins_sorted` with columns `species` and `avg_bill_length`.
+  code_template: |
+    import pandas as pd
+
+    penguins_data = pd.DataFrame({
+        "species": ["Adelie"] * 3 + ["Gentoo"] * 3 + ["Chinstrap"] * 2,
+        "island": ["Biscoe", "Dream", "Torgersen"] * 2 + ["Dream"] * 2,
+        "bill_length_mm": [38.0, 40.0, 39.0, 47.0, 49.0, 48.0, 50.0, 52.0],
+    })
+
+    # Works, but hard to read:
+    # print(penguins_data.groupby('species').filter(lambda x: x['species'].iloc[0] in penguins_data.groupby('species')['island'].nunique()[penguins_data.groupby('species')['island'].nunique() == penguins_data['island'].nunique()].index).groupby('species')['bill_length_mm'].mean().sort_values(ascending=False))
+
+    # Only include penguins that are present on all islands
+
+    # Group by species
+
+    # Calculate average bill length
+
+    # Arrange by longest bill length
+
+    # Display results
+  solution: |
+    import pandas as pd
+
+    penguins_data = pd.DataFrame({
+        "species": ["Adelie"] * 3 + ["Gentoo"] * 3 + ["Chinstrap"] * 2,
+        "island": ["Biscoe", "Dream", "Torgersen"] * 2 + ["Dream"] * 2,
+        "bill_length_mm": [38.0, 40.0, 39.0, 47.0, 49.0, 48.0, 50.0, 52.0],
+    })
+
+    # Only include penguins that are present on all islands
+    species_island_counts = penguins_data.groupby("species")["island"].nunique()
+    total_islands = penguins_data["island"].nunique()
+    species_on_all_islands = species_island_counts[species_island_counts == total_islands].index
+    penguins_filtered = penguins_data[penguins_data["species"].isin(species_on_all_islands)]
+
+    # Group by species
+    penguins_grouped = penguins_filtered.groupby("species")
+
+    # Calculate average bill length
+    penguins_with_avg = penguins_grouped["bill_length_mm"].mean().reset_index()
+    penguins_with_avg.columns = ["species", "avg_bill_length"]
+
+    # Arrange by longest bill length
+    penguins_sorted = penguins_with_avg.sort_values("avg_bill_length", ascending=False)
+
+    # Display results
+    print(penguins_sorted)
+  hints: |
+    - Give each step its own named variable so you can print and check it on its own.
+    - Count islands per species with `.groupby("species")["island"].nunique()`.
+    - `.isin()` keeps the rows whose species is in a list of names.
+  success_criteria: |
+    - Each chunk does one thing (no step joined by "and"), matching the pseudocode
+    - Intermediate results are stored in named variables, not chained in one line
+    - `penguins_sorted` holds only species present on all islands, with their average bill length, longest first
+  llm_evaluation_prompt: |
+    You are grading a beginner exercise on the single responsibility principle:
+    rewrite a do-everything pandas one-liner as small chunks that each do one thing.
+
+    The student submitted this code:
+    {student_code}
+
+    Mark it correct only if the result is right AND the work is split into separate,
+    single-purpose steps with named variables. A correct result chained in one line
+    is incorrect. Call respond_with_feedback with two or three encouraging sentences.
+
+checks:
+  - "assert list(penguins_sorted['species']) == ['Gentoo', 'Adelie']"
+  - "assert list(penguins_sorted['avg_bill_length']) == [48.0, 39.0]"
+
+packages:
+  - pandas

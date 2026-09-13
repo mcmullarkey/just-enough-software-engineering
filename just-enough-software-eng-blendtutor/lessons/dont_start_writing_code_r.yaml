@@ -1,0 +1,27 @@
+# A lesson scaffolded by `blendtutor new lesson`. Edit it, then check your
+# changes with `blendtutor validate lessons/dont_start_writing_code_r.yaml`.
+lesson_name: "dont_start_writing_code_r"
+language: R
+description: "A starter pseudocode lesson"
+exercise:
+  type: "function_writing"
+  prompt: |
+    Write pseudocode in a series of comments, NOT ACTUAL CODE, to read in data, group by penguin species, and get the average bill length. 
+  code_template: |
+    # Your comments here
+  example_usage: |
+    # Read in data
+    # Group by penguin species
+    # Get average bill length
+  success_criteria: |
+    - Uses only comments that start with #, no actual code
+    - References all of reading in data, grouping by penguin species, and calculating average bill length
+  llm_evaluation_prompt: |
+    You are grading a beginner exercise on pseudocode: Write pseudocode in a series of comments, NOT ACTUAL CODE, to read in data, group by penguin species, and get the average bill length.
+
+    The student submitted this code:
+    {student_code}
+
+    Decide whether it provides good enough pseudocode and call respond_with_feedback with your
+    assessment. Set is_correct true when the requirement is met, and give two or
+    three sentences of encouraging feedback.

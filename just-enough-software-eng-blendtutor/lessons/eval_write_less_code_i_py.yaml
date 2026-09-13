@@ -1,0 +1,79 @@
+# Eval suite for write_less_code_i_py.yaml: 2 correct, 2 incorrect.
+cases:
+  # Correct: the chapter's step-by-step version
+  - submission: |-
+      import pandas as pd
+      penguins_data = pd.DataFrame({
+          "species": ["Adelie"] * 3 + ["Gentoo"] * 3 + ["Chinstrap"] * 2,
+          "island": ["Biscoe", "Dream", "Torgersen"] * 2 + ["Dream"] * 2,
+          "bill_length_mm": [38.0, 40.0, 39.0, 47.0, 49.0, 48.0, 50.0, 52.0],
+      })
+      # Only include penguins that are present on all islands
+      species_island_counts = penguins_data.groupby("species")["island"].nunique()
+      total_islands = penguins_data["island"].nunique()
+      species_on_all_islands = species_island_counts[species_island_counts == total_islands].index
+      penguins_filtered = penguins_data[penguins_data["species"].isin(species_on_all_islands)]
+      # Group by species
+      penguins_grouped = penguins_filtered.groupby("species")
+      # Calculate average bill length
+      penguins_with_avg = penguins_grouped["bill_length_mm"].mean().reset_index()
+      penguins_with_avg.columns = ["species", "avg_bill_length"]
+      # Arrange by longest bill length
+      penguins_sorted = penguins_with_avg.sort_values("avg_bill_length", ascending=False)
+      # Display results
+      print(penguins_sorted)
+    expected: correct
+  # Correct: different names and methods, still one step per chunk
+  - submission: |-
+      import pandas as pd
+      penguins_data = pd.DataFrame({
+          "species": ["Adelie"] * 3 + ["Gentoo"] * 3 + ["Chinstrap"] * 2,
+          "island": ["Biscoe", "Dream", "Torgersen"] * 2 + ["Dream"] * 2,
+          "bill_length_mm": [38.0, 40.0, 39.0, 47.0, 49.0, 48.0, 50.0, 52.0],
+      })
+      # Only include penguins that are present on all islands
+      n_islands = penguins_data["island"].nunique()
+      islands_per_species = penguins_data.groupby("species")["island"].nunique()
+      everywhere = islands_per_species[islands_per_species == n_islands].index
+      on_all_islands = penguins_data[penguins_data["species"].isin(everywhere)]
+      # Group by species
+      by_species = on_all_islands.groupby("species", as_index=False)
+      # Calculate average bill length
+      averages = by_species.agg(avg_bill_length=("bill_length_mm", "mean"))
+      # Arrange by longest bill length
+      penguins_sorted = averages.sort_values("avg_bill_length", ascending=False)
+      # Display results
+      print(penguins_sorted)
+    expected: correct
+  # Incorrect: right answer, but still one do-everything chain
+  - submission: |-
+      import pandas as pd
+      penguins_data = pd.DataFrame({
+          "species": ["Adelie"] * 3 + ["Gentoo"] * 3 + ["Chinstrap"] * 2,
+          "island": ["Biscoe", "Dream", "Torgersen"] * 2 + ["Dream"] * 2,
+          "bill_length_mm": [38.0, 40.0, 39.0, 47.0, 49.0, 48.0, 50.0, 52.0],
+      })
+      penguins_sorted = penguins_data[penguins_data["species"].isin(penguins_data.groupby("species")["island"].nunique().loc[lambda s: s == penguins_data["island"].nunique()].index)].groupby("species", as_index=False).agg(avg_bill_length=("bill_length_mm", "mean")).sort_values("avg_bill_length", ascending=False)
+      print(penguins_sorted)
+    expected: incorrect
+  # Incorrect: split into steps, but sorted shortest bill first
+  - submission: |-
+      import pandas as pd
+      penguins_data = pd.DataFrame({
+          "species": ["Adelie"] * 3 + ["Gentoo"] * 3 + ["Chinstrap"] * 2,
+          "island": ["Biscoe", "Dream", "Torgersen"] * 2 + ["Dream"] * 2,
+          "bill_length_mm": [38.0, 40.0, 39.0, 47.0, 49.0, 48.0, 50.0, 52.0],
+      })
+      # Only include penguins that are present on all islands
+      total_islands = penguins_data["island"].nunique()
+      counts = penguins_data.groupby("species")["island"].nunique()
+      penguins_filtered = penguins_data[penguins_data["species"].isin(counts[counts == total_islands].index)]
+      # Group by species
+      grouped = penguins_filtered.groupby("species")
+      # Calculate average bill length
+      penguins_with_avg = grouped["bill_length_mm"].mean().reset_index(name="avg_bill_length")
+      # Arrange by longest bill length
+      penguins_sorted = penguins_with_avg.sort_values("avg_bill_length")
+      # Display results
+      print(penguins_sorted)
+    expected: incorrect

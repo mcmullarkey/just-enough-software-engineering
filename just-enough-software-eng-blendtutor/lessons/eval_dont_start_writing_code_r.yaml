@@ -1,0 +1,25 @@
+# The eval suite scaffolded by `blendtutor new lesson` for
+# lessons/dont_start_writing_code_r.yaml — this file's `eval_`-prefixed sibling. Each case
+# pairs a sample submission with the verdict you expect a good grader
+# to return (correct or incorrect). Edit it, then score it with
+# `blendtutor eval lessons/dont_start_writing_code_r.yaml`.
+cases:
+  - submission: |-
+      # Load the data
+      # Group by the species of penguin
+      # Aggregate the bill length
+    expected: correct
+  - submission: |-
+      # Load the data     
+      # Aggregate the bill length
+    expected: incorrect
+  - submission: |-
+      # Group by the species of penguin 
+      # Aggregate the bill length
+    expected: incorrect
+  - submission: |-
+      # Read in the data
+      # Group by the species of penguin 
+      # Take the mean of the bill length
+    expected: correct
+
