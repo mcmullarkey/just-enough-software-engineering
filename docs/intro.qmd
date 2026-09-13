@@ -2,12 +2,7 @@
 
 ## Why for Social and Data Scientists?
 
-- Many social and data scientists 
-    - Use coding to solve problems + produce deliverables
-    - Don't have a software engineering background
-- Many "get better at coding" resources assume either
-    - Little to no background using code
-    - A software-engineering background for using code
+Many social and data scientists use coding to solve problems + produce deliverables. However, many "get better at coding" resources assume either: little to no background using code OR a software-engineering background.
 
 Therefore, most resources will either: 
 
@@ -18,7 +13,7 @@ Therefore, most resources will either:
 
 This resource aims to flatten that learning curve. 
 
-The goal is not to *become a software engineer*. Instead this resource will teach you to approach code in a way that will make a myriad of other resources more useful.
+The goal is not to become a software engineer. Instead this resource will teach you to approach code in a way that will make a myriad of other resources more useful.
 
 ## Why "Just Enough"?
 

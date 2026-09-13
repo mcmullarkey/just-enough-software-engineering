@@ -4,7 +4,7 @@ Welcome to **Just Enough Software Engineering for Social and Data Scientists** b
 
 I write production code as a Machine Learning Engineer, and I used to be both a data scientsit at a couple of startups + a social scientist who did a ton of academic data work. 
 
-I'm sympathetic to the structural limitations inherent to data + social scientist roles. And I still think *just enough* software engineering can improve people's lives in these roles.
+I'm sympathetic to the structural limitations inherent to data + social scientist roles. And I still think software engineering can improve people's lives in these roles.
 
 ## About This Book
 
